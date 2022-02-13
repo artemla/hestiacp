@@ -33,6 +33,7 @@ json_list() {
         "PORT": "'$PORT'",
         "TYPE": "'$type'",
         "BPATH": "'$BPATH'",
+        "PIPE": "'$PIPE'",
         "TIME": "'$TIME'",
         "DATE": "'$DATE'"
     }'
@@ -61,6 +62,7 @@ shell_list() {
     echo "PORT:           $PORT"
     echo "TYPE:           $type"
     echo "PATH:           $BPATH"
+    echo "PIPE:           $PIPE"
     echo "TIME:           $TIME"
     echo "DATE:           $DATE"
     ;;
@@ -78,7 +80,7 @@ shell_list() {
 plain_list() {
     case $type in
     'sftp' | 'ftp')
-    echo -e "$HOST\t$USERNAME\t$PORT\t$type\t$BPATH\t$TIME\t$DATE"
+    echo -e "$HOST\t$USERNAME\t$PORT\t$type\t$BPATH\t$PIPE\t$TIME\t$DATE"
     ;;
     'b2')
     echo -e "$BUCKET\t$type\t$B2_KEYID\t$TIME\t$DATE"
@@ -90,8 +92,8 @@ plain_list() {
 csv_list() {
     case $type in
     'sftp' | 'ftp')
-    echo "HOST,USERNAME,PORT,TYPE,PATH,TIME,DATE"
-    echo "$HOST,$USERNAME,$PORT,$type,$BPATH,$TIME,$DATE"
+    echo "HOST,USERNAME,PORT,TYPE,PATH,PIPE,TIME,DATE"
+    echo "$HOST,$USERNAME,$PORT,$type,$BPATH,$PIPE,$TIME,$DATE"
     ;;
     'b2')
     echo "BUCKET,TYPE,B2_KEYID,TIME,DATE"
