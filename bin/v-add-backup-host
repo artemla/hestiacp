@@ -19,6 +19,7 @@ raw_password=$4; HIDE=4
 password=$(perl -e 'print quotemeta shift(@ARGV)' "${raw_password}")
 path=${5-/backup}
 port=$6
+pipe=${7-no}
 
 # CPU Architecture
 arch=$(uname -m)
@@ -105,9 +106,10 @@ EOF
 #----------------------------------------------------------#
 
 if [ "$type" != 'local' ];then
-    check_args '4' "$#" "TYPE HOST USERNAME PASSWORD [PATH] [PORT]"
+    check_args '4' "$#" "TYPE HOST USERNAME PASSWORD [PATH] [PORT] [PIPE]"
     is_format_valid 'host' 'path' 'port'
     is_type_valid  'sftp,ftp,b2' "$type"
+    is_boolean_format_valid "$pipe" 'pipe(yes/no)'
     is_username_format_valid "$user" "username"
     is_password_valid
     format_no_quotes "$password" "password"
@@ -225,7 +227,7 @@ fi
 if [ $type != 'local' ] && [ $type != 'b2' ]; then
     new_timestamp
     str="HOST='$host'\nUSERNAME='$user'\nPASSWORD='$password'"
-    str="$str\nBPATH='$path'\nPORT='$port'\nTIME='$time'\nDATE='$date'"
+    str="$str\nBPATH='$path'\nPORT='$port'\nPIPE='$pipe'\nTIME='$time'\nDATE='$date'"
     echo -e "$str" > $HESTIA/conf/$type.backup.conf
     chmod 660 $HESTIA/conf/$type.backup.conf
 elif [ $type == 'b2' ]; then
