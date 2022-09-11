@@ -790,6 +790,20 @@
 																	<br><br>
 																</td>
 															</tr>
+															<tr>
+																<td class="vst-text">
+																	<?=_('Do not create backup locally (requires less disk space)');?>
+																</td>
+															</tr>
+															<tr>
+																<td class="vst-text">
+																	<select class="vst-list" name="v_backup_pipe" id="backup_pipe">
+																		<option value='no' <?php if($v_backup_pipe != 'yes') echo 'selected' ?>><?=_('No'); ?></option>
+																		<option value='yes' <?php if($v_backup_pipe == 'yes') echo 'selected' ?>><?=_('Yes'); ?></option>
+																	</select>
+																	<br><br>
+																</td>
+															</tr>
 														</table>
 													</td>
 												</tr>
