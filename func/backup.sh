@@ -154,15 +154,24 @@ ftp_backup() {
             ftpc "cd $BPATH" "put $user.$backup_new_date.tar"
         fi
     else
-        cd $tmpdir
-        tar -cf $BACKUP/$user.$backup_new_date.tar .
-        cd $BACKUP/
-        if [ -z $BPATH ]; then
-            ftpc "put $user.$backup_new_date.tar"
+        if [ "$PIPE" != 'yes' ]; then
+            cd $tmpdir
+            tar -cf $BACKUP/$user.$backup_new_date.tar .
+            cd $BACKUP/
+            if [ -z $BPATH ]; then
+                ftpc "put $user.$backup_new_date.tar"
+            else
+                ftpc "cd $BPATH" "put $user.$backup_new_date.tar"
+            fi
+            rm -f $user.$backup_new_date.tar
         else
-            ftpc "cd $BPATH" "put $user.$backup_new_date.tar"
+            cd $tmpdir
+            if [ -z $BPATH ]; then
+                ftpc "put \"| tar -cf - .\" $user.$backup_new_date.tar"
+            else
+                ftpc "cd $BPATH" "put \"| tar -cf - .\" $user.$backup_new_date.tar"
+            fi
         fi
-        rm -f $user.$backup_new_date.tar
     fi
 }
 
@@ -367,15 +376,26 @@ sftp_backup() {
             sftpc "cd $BPATH" "put $user.$backup_new_date.tar" "chmod 0600 $user.$backup_new_date.tar" > /dev/null 2>&1
         fi
     else
-        cd $tmpdir
-        tar -cf $BACKUP/$user.$backup_new_date.tar .
-        cd $BACKUP/
-        if [ -z $BPATH ]; then
-            sftpc "put $user.$backup_new_date.tar" "chmod 0600 $user.$backup_new_date.tar" > /dev/null 2>&1
+        if [ "$PIPE" != 'yes' ]; then
+            cd $tmpdir
+            tar -cf $BACKUP/$user.$backup_new_date.tar .
+            cd $BACKUP/
+            if [ -z $BPATH ]; then
+                sftpc "put $user.$backup_new_date.tar" "chmod 0600 $user.$backup_new_date.tar" > /dev/null 2>&1
+            else
+                sftpc "cd $BPATH" "put $user.$backup_new_date.tar" "chmod 0600 $user.$backup_new_date.tar" > /dev/null 2>&1
+            fi
+            rm -f $user.$backup_new_date.tar
         else
-            sftpc "cd $BPATH" "put $user.$backup_new_date.tar" "chmod 0600 $user.$backup_new_date.tar" > /dev/null 2>&1
+            cd $tmpdir
+            if [ -z $BPATH ]; then
+                tar -cf - . | curl -ks -u $USERNAME:$PASSWORD -T - sftp://$HOST:$PORT/$user.$backup_new_date.tar
+                sftpc "chmod 0600 $user.$backup_new_date.tar" > /dev/null 2>&1
+            else
+                tar -cf - . | curl -ks -u $USERNAME:$PASSWORD -T - sftp://$HOST:$PORT/$BPATH/$user.$backup_new_date.tar
+                sftpc "cd $BPATH" "chmod 0600 $user.$backup_new_date.tar" > /dev/null 2>&1
+            fi
         fi
-        rm -f $user.$backup_new_date.tar
     fi
 }
 
